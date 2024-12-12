@@ -8,7 +8,7 @@ export default function MyOrder() {
 
     const fetchMyOrder = async () => {
         console.log(localStorage.getItem('userEmail'));
-        await fetch("https://mealmate-ffyx.onrender.com/api/myorderData", {
+        await fetch("https://mealmate-ffyx.onrender.com/myorderData", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

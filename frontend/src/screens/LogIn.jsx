@@ -10,7 +10,7 @@ export default function LogIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://mealmate-ffyx.onrender.com/api/loginuser", {
+    const response = await fetch("https://mealmate-ffyx.onrender.com/loginuser", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -37,9 +37,6 @@ export default function LogIn() {
     setcredentials({ ...credentials, [event.target.name]: event.target.value });
   };
 
-//   const handleGoogleLogin = () => {
-//     window.open('http://localhost:5000/api/auth/google', '_self');
-// };
 
   return (
     <div className='container mt-5 auth-container'>
