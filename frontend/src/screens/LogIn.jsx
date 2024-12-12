@@ -10,7 +10,7 @@ export default function LogIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://mealmate-ffyx.onrender.com/loginuser", {
+    const response = await fetch("https://mealmate-dtpk.onrender.com/api/loginuser", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

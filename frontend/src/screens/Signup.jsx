@@ -9,7 +9,7 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://mealmate-ffyx.onrender.com/createuser", {
+    const response = await fetch("https://mealmate-dtpk.onrender.com/api/createuser", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
