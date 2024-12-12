@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 })
 
 app.use((req,res,next)=>{
-  res.setHeader("Access-Control-Allow-Origin","https://meal-mate-lime.vercel.app/");
+  res.setHeader("Access-Control-Allow-Origin","meal-mate-573ub352z-jairam-deos-projects.vercel.app");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
