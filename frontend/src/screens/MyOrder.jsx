@@ -32,7 +32,7 @@ export default function MyOrder() {
             <Navbar />
             <div className='container'>
                 <div className='fs-1 text-center'>My Orders</div>
-                <div className='row'>
+                <div className='row mx-auto'>
 
                     {Object.keys(orderData).length !== 0 ? (
                         // Loop through orderData to render orders
@@ -58,7 +58,7 @@ export default function MyOrder() {
                                                 )}
 
                                                 {/* Display items in a row */}
-                                                <div className='row'>
+                                                <div className='row mx-auto'>
                                                     {item.map((arrayData, idx) => {
                                                         // Ensure valid arrayData before rendering the card
                                                         if (arrayData && arrayData.name) {
