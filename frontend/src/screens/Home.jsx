@@ -7,9 +7,10 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const loadData = async () => {
-    let response = await fetch("https://mealmate-dtpk.onrender.com/api/foodData", {
+    let response = await fetch(`${backendUrl}/api/foodData`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

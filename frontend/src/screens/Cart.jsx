@@ -7,6 +7,7 @@ import { MdDelete } from "react-icons/md";
 export default function Cart() {
   let data = useCart();
   let dispatch = useDispatchCart();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   let navigate = useNavigate();
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
@@ -31,7 +32,7 @@ export default function Cart() {
   const handleCheckOut = async () => {
     let userEmail = localStorage.getItem("userEmail");
   
-    let response = await fetch("https://mealmate-dtpk.onrender.com/api/orderData", {
+    let response = await fetch(`${backendUrl}/api/orderData`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

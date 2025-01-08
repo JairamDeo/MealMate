@@ -6,10 +6,11 @@ export default function Signup() {
   const [credentials, setcredentials] = useState({ name: "", email: "", password: "", geolocation: "" });
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   let navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://mealmate-dtpk.onrender.com/api/createuser", {
+    const response = await fetch(`${backendUrl}/api/createuser`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

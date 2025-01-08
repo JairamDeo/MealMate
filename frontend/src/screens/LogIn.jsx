@@ -7,10 +7,11 @@ export default function LogIn() {
   const [credentials, setcredentials] = useState({ email: "", password: "" });
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   let navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://mealmate-dtpk.onrender.com/api/loginuser", {
+    const response = await fetch(`${backendUrl}/api/loginuser`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

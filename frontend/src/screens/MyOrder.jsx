@@ -5,10 +5,11 @@ import Navbar from '../components/Navbar';
 export default function MyOrder() {
 
     const [orderData, setOrderData] = useState({});
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     const fetchMyOrder = async () => {
         console.log(localStorage.getItem('userEmail'));
-        await fetch("https://mealmate-dtpk.onrender.com/api/myorderData", {
+        await fetch(`${backendUrl}/api/myorderData`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
