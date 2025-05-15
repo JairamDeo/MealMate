@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
 
 export default function MyOrder() {
   const [orderData, setOrderData] = useState({});
@@ -27,7 +25,6 @@ export default function MyOrder() {
 
   return (
     <div>
-      <Navbar />
       <div className="container mx-auto px-4 py-6">
         <div className="text-3xl font-semibold text-center mb-8">My Orders</div>
         <div className="grid gap-6">
@@ -87,7 +84,6 @@ export default function MyOrder() {
           )}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

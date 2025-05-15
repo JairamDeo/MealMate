@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
 import Card from '../components/Card';
 
 export default function Home() {
@@ -55,7 +53,6 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar />
 
       {/* Carousel */}
       <div className="relative w-full h-64 md:h-96 overflow-hidden">
@@ -133,8 +130,6 @@ export default function Home() {
             : null
         }
       </div>
-
-      <Footer />
     </div>
   )
 }

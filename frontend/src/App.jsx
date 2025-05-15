@@ -7,7 +7,8 @@ import {
 } from 'react-router-dom';
 import { CartProvider } from './components/ContextReduce';
 
-// Lazy loading components
+const Navbar = lazy(() => import('./components/Navbar'));
+const Footer = lazy(() => import('./components/Footer'));
 const Home = lazy(() => import('./screens/Home'));
 const LogIn = lazy(() => import('./screens/LogIn'));
 const Signup = lazy(() => import('./screens/Signup'));
@@ -18,12 +19,16 @@ function App() {
     <CartProvider>
       <Router>
         <Suspense fallback={<div className="text-center text-lg p-4">Loading...</div>}>
-          <Routes>
-            <Route exact path='/' element={<Home />} />
-            <Route exact path='/login' element={<LogIn />} />
-            <Route exact path='/signup' element={<Signup />} />
-            <Route exact path='/myorder' element={<MyOrder />} />
-          </Routes>
+          <div>
+            <Navbar />
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/login' element={<LogIn />} />
+              <Route path='/signup' element={<Signup />} />
+              <Route path='/myorder' element={<MyOrder />} />
+            </Routes>
+            <Footer />
+          </div>
         </Suspense>
       </Router>
     </CartProvider>
