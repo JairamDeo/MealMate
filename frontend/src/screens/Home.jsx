@@ -53,7 +53,6 @@ export default function Home() {
 
   return (
     <div>
-
       {/* Carousel */}
       <div className="relative w-full h-64 md:h-96 overflow-hidden">
         {/* Search input centered over carousel */}
