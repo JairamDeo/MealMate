@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useCart, useDispatchCart } from '../components/ContextReduce';
@@ -14,24 +14,34 @@ export default function Cart() {
 
   if (data.length === 0) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-      {!showSuccessAnimation && (
-        <div className='m-5 w-100 text-center fs-3'>The Cart is Empty!</div>
-      )}
-      {showSuccessAnimation && (
-        <div className="success-animation text-center">
-          <img src="/delivery-man.gif" alt="Login Successful" className="success-gif" />
-          <h3>Your Order has been Placed Successfully</h3>
-        </div>
-      )}
-    </div>
+      <div className="flex justify-center items-center min-h-screen px-4">
+        {!showSuccessAnimation && (
+          <div className="m-5 w-full text-center text-xl md:text-2xl font-semibold text-gray-700">
+            The Cart is Empty!
+          </div>
+        )}
+        {showSuccessAnimation && (
+          <div className="success-animation text-center">
+            <img
+              src="/delivery-man.gif"
+              alt="Login Successful"
+              className="mx-auto mb-4 max-w-xs w-full"
+              loading="lazy"
+            />
+            <h3 className="text-2xl font-semibold text-green-600">
+              Your Order has been Placed Successfully
+            </h3>
+          </div>
+        )}
+      </div>
     )
   }
+
   let totalPrice = data.reduce((total, food) => total + food.price, 0);
 
   const handleCheckOut = async () => {
     let userEmail = localStorage.getItem("userEmail");
-  
+
     let response = await fetch(`${backendUrl}/api/orderData`, {
       method: 'POST',
       headers: {
@@ -44,54 +54,72 @@ export default function Cart() {
         finalPrice: totalPrice
       })
     });
-  
+
     if (response.status === 200) {
       setShowSuccessAnimation(true); // Show the success animation
       dispatch({ type: "DROP" }); // Clear the cart
-  
+
       // Hide the success animation after 2 seconds
       setTimeout(() => {
         setShowSuccessAnimation(false);
         navigate("/myorder");
       }, 2000);
-
     }
   }
 
   return (
-    <div>
-      <div className='container m-auto mt-5 table-responsive  table-responsive-sm table-responsive-md' >
-        <table className='table table-hover '>
-          <thead className=' text-success fs-4'>
+    <div className="container mx-auto px-4 mt-10">
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300 rounded-md shadow-md table-auto">
+          <thead className="bg-green-100 text-green-800 text-lg font-semibold">
             <tr>
-              <th scope='col' >#</th>
-              <th scope='col' >Name</th>
-              <th scope='col' >Quantity</th>
-              <th scope='col' >Option</th>
-              <th scope='col' >Amount</th>
-              <th scope='col' ></th>
+              <th className="px-4 py-3 border-b border-green-300 text-left">#</th>
+              <th className="px-4 py-3 border-b border-green-300 text-left">Name</th>
+              <th className="px-4 py-3 border-b border-green-300 text-center">Quantity</th>
+              <th className="px-4 py-3 border-b border-green-300 text-center">Option</th>
+              <th className="px-4 py-3 border-b border-green-300 text-right">Amount</th>
+              <th className="px-4 py-3 border-b border-green-300"></th>
             </tr>
           </thead>
           <tbody>
             {data.map((food, index) => (
-              <tr>
-                <th scope='row' >{index + 1}</th>
-                <td >{food.name}</td>
-                <td>{food.qty}</td>
-                <td>{food.size}</td>
-                <td>{food.price}</td>
-                <td ><button type="button" className="btn p-0"><MdDelete onClick={() => { dispatch({ type: "REMOVE", index: index }) }} /></button> </td></tr>
+              <tr key={index} className="">
+                <td className="px-4 py-3 border-b border-gray-200">{index + 1}</td>
+                <td className="px-4 py-3 border-b border-gray-200">{food.name}</td>
+                <td className="px-4 py-3 border-b border-gray-200 text-center">{food.qty}</td>
+                <td className="px-4 py-3 border-b border-gray-200 text-center">{food.size}</td>
+                <td className="px-4 py-3 border-b border-gray-200 text-right">{food.price}</td>
+                <td className="px-4 py-3 border-b border-gray-200 text-center">
+                  <button
+                    type="button"
+                    className="text-red-600 hover:text-red-800 transition"
+                    aria-label={`Remove ${food.name} from cart`}
+                    onClick={() => dispatch({ type: "REMOVE", index: index })}
+                  >
+                    <MdDelete size={24} />
+                  </button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
-        <div><h1 className='fs-2'>Total Price: {totalPrice}/-</h1></div>
-
-        <div>
-          <button className='btn bg-success mt-5 ' onClick={handleCheckOut} > Check Out </button>
-        </div>
       </div>
 
+      <div className="mt-6 text-right">
+        <h1 className="text-2xl font-semibold">
+          Total Price: <span className="text-green-600">{totalPrice}/-</span>
+        </h1>
+      </div>
+
+      <div className="mt-8 text-center">
+        <button
+          onClick={handleCheckOut}
+          className="bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 focus:outline-none text-white font-semibold py-3 px-8 rounded-md transition"
+          aria-label="Check Out"
+        >
+          Check Out
+        </button>
+      </div>
     </div>
   )
 }
-//original code
