@@ -8,16 +8,12 @@ export default function Navbar() {
 
   let data = useCart(); 
   const [cartView, setCartView] = useState(false);
-
   const navbarRef = useRef(null); 
   const buttonRef = useRef(null); 
+  const navigate = useNavigate();
 
   const handleToggle = () => {
-    if (navbarRef.current.classList.contains("hidden")) {
-      navbarRef.current.classList.remove("hidden");
-    } else {
-      navbarRef.current.classList.add("hidden");
-    }
+    navbarRef.current.classList.toggle("hidden");
   };
 
   const handleClickOutside = (event) => {
@@ -32,46 +28,46 @@ export default function Navbar() {
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userEmail");
     navigate("/login");
   };
 
-  // Tailwind Badge component for cart count
   const CartBadge = ({ count }) => (
-    <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-2">
+    <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-dark-danger rounded-full ml-2">
       {count}
     </span>
   );
 
   return (
-    <nav className="bg-green-700 text-white shadow-md sticky top-0 z-50">
+    <nav className="bg-dark-surface text-white shadow-md sticky top-0 z-50 border-b border-dark-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="text-3xl font-serif italic font-semibold text-white hover:text-green-300 transition"
-          >
-            MealMate
-          </Link>
+          {/* Logo + Home */}
+          <div className="flex items-center space-x-6">
+            <Link
+              to="/"
+              className="text-3xl font-serif italic font-semibold text-white hover:text-dark-primary transition"
+            >
+              MealMate
+            </Link>
+            <Link
+              to="/"
+              className="text-lg font-medium text-white hover:text-dark-info transition"
+            >
+              Home
+            </Link>
+          </div>
 
-          {/* Hamburger menu button (small screens) */}
+          {/* Hamburger */}
           <button
             ref={buttonRef}
             onClick={handleToggle}
-            type="button"
-            aria-controls="navbarNavAltMarkup"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-green-300 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-700 focus:ring-white lg:hidden"
+            className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-dark-info hover:bg-dark-border focus:outline-none lg:hidden"
           >
             <svg
               className="block h-6 w-6"
@@ -79,53 +75,33 @@ export default function Navbar() {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
-          {/* Menu */}
-          <div
-            ref={navbarRef}
-            className="hidden lg:flex lg:items-center lg:space-x-6"
-            id="navbarNavAltMarkup"
-          >
-            <ul className="flex flex-col lg:flex-row lg:space-x-6 text-lg font-medium">
-              <li>
-                <Link
-                  to="/"
-                  className="block px-3 py-2 rounded-md text-white hover:bg-green-600 hover:text-white transition"
-                  aria-current="page"
-                >
-                  Home
-                </Link>
-              </li>
-
-              {localStorage.getItem("authToken") && (
-                <li>
-                  <Link
-                    to="/myorder"
-                    className="block px-3 py-2 rounded-md text-white hover:bg-green-600 hover:text-white transition"
-                    aria-current="page"
-                  >
-                    My Orders
-                  </Link>
-                </li>
-              )}
-            </ul>
+          {/* Desktop Menu */}
+          <div ref={navbarRef} className="hidden lg:flex lg:items-center lg:space-x-6">
+            {localStorage.getItem("authToken") && (
+              <Link
+                to="/myorder"
+                className="text-lg font-medium text-white hover:text-dark-info transition"
+              >
+                My Orders
+              </Link>
+            )}
 
             {!localStorage.getItem("authToken") ? (
               <div className="flex space-x-3 ml-6">
                 <Link
                   to="/login"
-                  className="px-4 py-2 bg-white text-green-700 rounded-md font-semibold hover:bg-green-100 transition"
+                  className="px-4 py-2 bg-dark-white text-dark-surface rounded-md font-semibold hover:bg-dark-muted transition"
                 >
                   LogIn
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-4 py-2 bg-white text-green-700 rounded-md font-semibold hover:bg-green-100 transition"
+                  className="px-4 py-2 bg-dark-white text-dark-surface rounded-md font-semibold hover:bg-dark-muted transition"
                 >
                   Signup
                 </Link>
@@ -134,7 +110,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-4 ml-6">
                 <button
                   onClick={() => setCartView(true)}
-                  className="relative px-4 py-2 bg-white text-green-700 rounded-md font-semibold hover:bg-green-100 transition flex items-center"
+                  className="relative px-4 py-2 bg-dark-info text-dark-dark rounded-md font-semibold hover:bg-dark-light transition flex items-center"
                 >
                   <span>My Cart</span>
                   {data.length > 0 && <CartBadge count={data.length} />}
@@ -148,7 +124,7 @@ export default function Navbar() {
 
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 bg-white text-red-600 rounded-md font-semibold hover:bg-red-100 transition"
+                  className="px-4 py-2 bg-dark-danger text-white rounded-md font-semibold hover:bg-red-700 transition"
                 >
                   Logout
                 </button>
@@ -158,12 +134,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu (small screens) */}
-      <div ref={navbarRef} className="lg:hidden hidden px-4 pt-2 pb-3 space-y-1 bg-green-700">
+      {/* Mobile Menu */}
+      <div ref={navbarRef} className="lg:hidden hidden px-4 pt-2 pb-3 space-y-1 bg-dark-surface border-t border-dark-border">
         <Link
           to="/"
-          className="block px-3 py-2 rounded-md text-white hover:bg-green-600 hover:text-white transition"
-          aria-current="page"
+          className="block px-3 py-2 text-white hover:bg-dark-border rounded-md"
           onClick={() => navbarRef.current.classList.add("hidden")}
         >
           Home
@@ -172,8 +147,7 @@ export default function Navbar() {
         {localStorage.getItem("authToken") && (
           <Link
             to="/myorder"
-            className="block px-3 py-2 rounded-md text-white hover:bg-green-600 hover:text-white transition"
-            aria-current="page"
+            className="block px-3 py-2 text-white hover:bg-dark-border rounded-md"
             onClick={() => navbarRef.current.classList.add("hidden")}
           >
             My Orders
@@ -184,14 +158,14 @@ export default function Navbar() {
           <>
             <Link
               to="/login"
-              className="block px-3 py-2 rounded-md bg-white text-green-700 font-semibold hover:bg-green-100 transition"
+              className="block px-3 py-2 bg-dark-white text-dark-surface font-semibold rounded-md hover:bg-dark-muted transition"
               onClick={() => navbarRef.current.classList.add("hidden")}
             >
               LogIn
             </Link>
             <Link
               to="/signup"
-              className="block px-3 py-2 rounded-md bg-white text-green-700 font-semibold hover:bg-green-100 transition"
+              className="block px-3 py-2 bg-dark-white text-dark-surface font-semibold rounded-md hover:bg-dark-muted transition"
               onClick={() => navbarRef.current.classList.add("hidden")}
             >
               Signup
@@ -204,7 +178,7 @@ export default function Navbar() {
                 setCartView(true);
                 navbarRef.current.classList.add("hidden");
               }}
-              className="relative px-3 py-2 bg-white text-green-700 rounded-md font-semibold hover:bg-green-100 transition flex items-center"
+              className="relative px-3 py-2 bg-dark-info text-dark-dark rounded-md font-semibold hover:bg-dark-light transition"
             >
               <span>My Cart</span>
               {data.length > 0 && <CartBadge count={data.length} />}
@@ -214,7 +188,7 @@ export default function Navbar() {
                 handleLogout();
                 navbarRef.current.classList.add("hidden");
               }}
-              className="px-3 py-2 bg-white text-red-600 rounded-md font-semibold hover:bg-red-100 transition"
+              className="px-3 py-2 bg-dark-danger text-white rounded-md font-semibold hover:bg-red-700 transition"
             >
               Logout
             </button>
