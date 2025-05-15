@@ -3,99 +3,91 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 
 export default function MyOrder() {
+  const [orderData, setOrderData] = useState({});
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    const [orderData, setOrderData] = useState({});
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const fetchMyOrder = async () => {
+    await fetch(`${backendUrl}/api/myorderData`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: localStorage.getItem('userEmail'),
+      }),
+    }).then(async (res) => {
+      let response = await res.json();
+      await setOrderData(response);
+    });
+  };
 
-    const fetchMyOrder = async () => {
-        console.log(localStorage.getItem('userEmail'));
-        await fetch(`${backendUrl}/api/myorderData`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: localStorage.getItem('userEmail'),
-            }),
-        }).then(async (res) => {
-            let response = await res.json();
-            await setOrderData(response);
-        });
-    };
+  useEffect(() => {
+    fetchMyOrder();
+  }, []);
 
-    useEffect(() => {
-        fetchMyOrder();
-    }, []);
+  return (
+    <div>
+      <Navbar />
+      <div className="container mx-auto px-4 py-6">
+        <div className="text-3xl font-semibold text-center mb-8">My Orders</div>
+        <div className="grid gap-6">
 
-    return (
-        <div>
-            <Navbar />
-            <div className='container'>
-                <div className='fs-1 text-center'>My Orders</div>
-                <div className='row mx-auto'>
-
-                    {Object.keys(orderData).length !== 0 ? (
-                        // Loop through orderData to render orders
-                        Array(orderData).map((data) => {
-                            return (
-                                data.orderData ?
-                                    data.orderData.order_data.slice(0).reverse().map((item, index) => {
-                                        return (
-                                            <div key={index}>
-                                                {/* Display order date if present */}
-                                                {item[0].Order_date && (
-                                                    <div className='m-auto mt-5'>
-                                                        <h5>Order Date: {new Date(item[0].Order_date).toLocaleString()}</h5>
-                                                        <hr />
-                                                    </div>
-                                                )}
-                                                {/* Display finalPrice if present */}
-                                                {item[0].finalPrice && (
-                                                    <div className='m-auto'>
-                                                        <h5>Your Order Value: ₹{item[0].finalPrice}/-</h5>
-                                                        <hr />
-                                                    </div>
-                                                )}
-
-                                                {/* Display items in a row */}
-                                                <div className='row mx-auto'>
-                                                    {item.map((arrayData, idx) => {
-                                                        // Ensure valid arrayData before rendering the card
-                                                        if (arrayData && arrayData.name) {
-                                                            return (
-                                                                <div className='col-12 col-md-4 col-lg-3 mb-3' key={idx}>
-                                                                    <div className="card mt-3" style={{ width: "16rem", maxHeight: "360px" }}>
-                                                                        <img src={arrayData.img} className="card-img-top" alt="..." style={{ height: "120px", objectFit: "fill" }} />
-                                                                        <div className="card-body">
-                                                                            <h5 className="card-title">{arrayData.name}</h5>
-                                                                            <div className='container w-100 p-0' style={{ height: "38px" }}>
-                                                                                <span className='m-1'>{arrayData.qty} x {arrayData.size}</span>
-                                                                                <div className='d-inline ms-2 h-100 w-20 fs-5'>
-                                                                                    ₹{arrayData.price}/-
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        }
-                                                        return null; // If no valid data, return nothing (no empty card)
-                                                    })}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                    : ""
-                            );
-                        })
-                    ) : (
-                        <div className="col-12">
-                            <p>No orders found.</p>
-                        </div>
+          {Object.keys(orderData).length !== 0 ? (
+            Array(orderData).map((data, dataIndex) => (
+              data.orderData ?
+                data.orderData.order_data.slice(0).reverse().map((item, index) => (
+                  <div key={`${dataIndex}-${index}`} className="space-y-4">
+                    {item[0].Order_date && (
+                      <div className="mt-6">
+                        <h5 className="text-lg font-medium">
+                          Order Date: {new Date(item[0].Order_date).toLocaleString()}
+                        </h5>
+                        <hr className="border-gray-300" />
+                      </div>
                     )}
-                </div>
-            </div>
-            <Footer />
+                    {item[0].finalPrice && (
+                      <div>
+                        <h5 className="text-lg font-medium">
+                          Your Order Value: ₹{item[0].finalPrice}/-
+                        </h5>
+                        <hr className="border-gray-300" />
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {item.map((arrayData, idx) => {
+                        if (arrayData && arrayData.name) {
+                          return (
+                            <div key={idx} className=" rounded-lg shadow-md overflow-hidden">
+                              <img
+                                src={arrayData.img}
+                                alt="Order Item"
+                                className="w-full h-32 object-cover"
+                                loading='lazy'
+                              />
+                              <div className="p-4">
+                                <h5 className="text-lg font-semibold">{arrayData.name}</h5>
+                                <div className="flex justify-between text-sm mt-2">
+                                  <span>{arrayData.qty} x {arrayData.size}</span>
+                                  <span className="text-green-700 font-semibold">₹{arrayData.price}/-</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  </div>
+                ))
+                : null
+            ))
+          ) : (
+            <div className="text-center text-lg text-gray-600">No orders found.</div>
+          )}
         </div>
-    );
+      </div>
+      <Footer />
+    </div>
+  );
 }
