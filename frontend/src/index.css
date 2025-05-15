@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .bg-food-auth {
-  @apply bg-[url('/AuthBg.jpg')] bg-cover bg-center bg-no-repeat;
+  @apply bg-[url('/AuthBg.webp')] bg-cover bg-center bg-no-repeat;
 }
 
 code {
