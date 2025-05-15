@@ -87,6 +87,20 @@ sudo systemctl enable apache2
 ```bash
 npm run build
 ```
+📝 After npm run build in Frontend
+Once you build:
+
+You get optimized files in dist/
+
+These files can be hosted on:
+
+S3 bucket
+
+Apache2 (/var/www/html)
+
+Nginx
+
+Any static file hosting service (e.g., Netlify, Vercel)
 
 🐧 For Linux Deploy build output to Apache's web directory:
 ```bash
