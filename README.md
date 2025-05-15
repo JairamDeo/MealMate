@@ -18,7 +18,7 @@ MealMate is a full-stack food delivery web application built using the **MERN st
 ✅ Responsive design
 
 ## 🛠️ Tech Stack
-- **Frontend:** React, Bootstrap
+- **Frontend:** React, tailwind
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
 - **Hosting:** Vercel (Frontend), Render/Atlas (Backend & Database)
