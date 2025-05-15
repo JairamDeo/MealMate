@@ -4,19 +4,6 @@ This is the frontend of a Food Ordering Web Application built with **React**, **
 
 ---
 
-## 🔧 Environment Configuration
-
-Before running the frontend app, create a `.env` file in the root directory and add the following line:
-
-```
-VITE_BACKEND_URL=http://localhost:5000
-```
-
-This URL should point to your backend server.
-change the url accoridng to your backend server port is 5000.
-
----
-
 ## 💻 Prerequisites
 
 - **Node.js** (Version 22.x recommended)
@@ -51,6 +38,19 @@ npm -v
 git clone https://github.com/JairamDeo/MealMate.git
 cd MealMate/frontend
 ```
+
+## 🔧 Environment Configuration
+
+Before running the frontend app, create a `.env` file in the root directory and add the following line:
+
+```
+VITE_BACKEND_URL=http://localhost:5000
+```
+
+This URL should point to your backend server.
+change the url accoridng to your backend server.
+
+---
 
 2. Install dependencies:
 
