@@ -1,35 +1,33 @@
-import { useState } from 'react'
+import { Suspense, lazy } from 'react';
 import './App.css';
-import Home from './screens/Home';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-
-} from "react-router-dom";
-import LogIn from './screens/LogIn';
-import Signup from './screens/Signup';
+} from 'react-router-dom';
 import { CartProvider } from './components/ContextReduce';
-import MyOrder from './screens/MyOrder';
 
+// Lazy loading components
+const Home = lazy(() => import('./screens/Home'));
+const LogIn = lazy(() => import('./screens/LogIn'));
+const Signup = lazy(() => import('./screens/Signup'));
+const MyOrder = lazy(() => import('./screens/MyOrder'));
 
 function App() {
   return (
     <CartProvider>
       <Router>
-        <div>
+        <Suspense fallback={<div className="text-center text-lg p-4">Loading...</div>}>
           <Routes>
             <Route exact path='/' element={<Home />} />
             <Route exact path='/login' element={<LogIn />} />
             <Route exact path='/signup' element={<Signup />} />
-            <Route exact path="/myorder" element={<MyOrder />} />
+            <Route exact path='/myorder' element={<MyOrder />} />
           </Routes>
-        </div>
+        </Suspense>
       </Router>
     </CartProvider>
   );
 }
 
 export default App;
-
-
