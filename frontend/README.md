@@ -47,8 +47,9 @@ Before running the frontend app, create a `.env` file in the root directory and 
 VITE_BACKEND_URL=http://localhost:5000
 ```
 
-This URL should point to your backend server.
-change the url accoridng to your backend server.
+http://localhost:5000 This URL should point to your backend server.
+change the url accoridng to your backend server wher it hosted.
+backend is running on port 5000
 
 ---
 
@@ -63,6 +64,7 @@ Start the development server:
 ```bash
 npm run dev
 ```
+This will launch the React app on `http://localhost:5173` by default.
 
 3. 🐧 For Linux EC2 Server:
 
@@ -80,7 +82,7 @@ sudo systemctl enable apache2
 
 ```
 
-4. 🏗 Build the React app:
+4. 🏗 Build the React app for production:
 
 ```bash
 npm run build
@@ -90,8 +92,6 @@ npm run build
 ```bash
 sudo cp -rf dist/* /var/www/html/
 ```
-
-This will launch the React app on `http://localhost:5173` by default.
 
 🌐 Now, you can access your React frontend on linux via :
 ```bash
