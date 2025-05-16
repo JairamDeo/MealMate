@@ -1,52 +1,49 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Modal from '../Modal';
+import Modal from "../Modal";
 import Cart from "../screens/Cart";
 import { useCart } from "./ContextReduce";
 import { ShoppingCart } from "lucide-react";
 
 export default function Navbar() {
-  let data = useCart();
+  const data = useCart();
   const [cartView, setCartView] = useState(false);
   const mobileMenuRef = useRef(null);
   const buttonRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleToggle = () => {
-    if (mobileMenuRef.current) {
-      if (mobileMenuRef.current.classList.contains("translate-x-full")) {
-        mobileMenuRef.current.classList.remove("translate-x-full");
-        mobileMenuRef.current.classList.add("translate-x-0");
-      } else {
-        mobileMenuRef.current.classList.add("translate-x-full");
-        mobileMenuRef.current.classList.remove("translate-x-0");
-      }
-    }
-  };
+  const handleToggle = useCallback(() => {
+    const menu = mobileMenuRef.current;
+    if (!menu) return;
+    menu.classList.toggle("translate-x-full");
+    menu.classList.toggle("translate-x-0");
+  }, []);
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = useCallback((event) => {
+    const menu = mobileMenuRef.current;
+    const button = buttonRef.current;
     if (
-      mobileMenuRef.current &&
-      buttonRef.current &&
-      !mobileMenuRef.current.classList.contains("translate-x-full") &&
-      !mobileMenuRef.current.contains(event.target) &&
-      !buttonRef.current.contains(event.target)
+      menu &&
+      button &&
+      !menu.classList.contains("translate-x-full") &&
+      !menu.contains(event.target) &&
+      !button.contains(event.target)
     ) {
-      mobileMenuRef.current.classList.add("translate-x-full");
-      mobileMenuRef.current.classList.remove("translate-x-0");
+      menu.classList.add("translate-x-full");
+      menu.classList.remove("translate-x-0");
     }
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
+  }, [handleClickOutside]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userEmail");
     navigate("/login");
-  };
+  }, [navigate]);
 
   const CartBadge = ({ count }) => (
     <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#DC3545] rounded-full ml-2">
@@ -83,9 +80,7 @@ export default function Navbar() {
               aria-label="Open Cart"
             >
               <ShoppingCart size={24} />
-              {data.length > 0 && (
-                <CartBadge count={data.length} />
-              )}
+              {data.length > 0 && <CartBadge count={data.length} />}
             </button>
 
             {/* Hamburger */}
@@ -101,7 +96,12 @@ export default function Navbar() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
@@ -134,7 +134,6 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center space-x-4 ml-6">
-                {/* Cart Icon Button for Desktop */}
                 <button
                   onClick={() => setCartView(true)}
                   className="relative p-2 bg-[#0DCAF0] text-[#212529] rounded-md font-semibold hover:bg-[#F8F9FA] transition duration-300 flex items-center"
@@ -204,7 +203,6 @@ export default function Navbar() {
           </>
         ) : (
           <div className="flex flex-col space-y-2">
-            {/* No My Cart button here on mobile menu */}
             <button
               onClick={() => {
                 handleLogout();
@@ -218,7 +216,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Cart Modal for mobile & desktop */}
+      {/* Cart Modal */}
       {cartView && (
         <Modal onClose={() => setCartView(false)}>
           <Cart />

@@ -106,7 +106,7 @@ export default function Cart() {
       </div>
 
       <div className="mt-6 text-right">
-        <h1 className="text-2xl font-semibold">
+        <h1 className="text-2xl font-semibold text-white">
           Total Price: <span className="text-green-600">{totalPrice}/-</span>
         </h1>
       </div>
