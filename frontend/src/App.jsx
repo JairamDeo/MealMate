@@ -22,7 +22,7 @@ function App() {
     <CartProvider>
       <Router>
         <Navbar />
-        <Suspense fallback={<div className="text-center text-lg p-4">Loading Food Items...</div>}>
+        <Suspense fallback={<div className="text-center text-lg p-4">Loading...</div>}>
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<LogIn />} />

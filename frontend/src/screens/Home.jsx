@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import Card from '../components/Card';
+import Card from '../components/Card'; // ✅ Direct import (not lazy)
 
 export default function Home() {
   const [search, setSearch] = useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
+  const [loading, setLoading] = useState(true);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const loadData = async () => {
+    setLoading(true);
     try {
       let response = await fetch(`${backendUrl}/api/foodData`, {
         method: "POST",
@@ -20,6 +22,8 @@ export default function Home() {
       setFoodCat(response[1]);
     } catch (error) {
       console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,7 +100,12 @@ export default function Home() {
 
       {/* Food categories and cards */}
       <div className="container mx-auto px-4 py-6">
-        {foodCat.length > 0 &&
+        {loading ? (
+          <div className="text-center text-xl font-semibold text-gray-600 animate-pulse">
+            Loading food items...
+          </div>
+        ) : (
+          foodCat.length > 0 &&
           foodCat.map((data) => (
             <div key={data._id} className="mb-8">
               <div className="text-3xl mb-2">{data.CategoryName}</div>
@@ -121,7 +130,8 @@ export default function Home() {
                 )}
               </div>
             </div>
-          ))}
+          ))
+        )}
       </div>
     </div>
   );
