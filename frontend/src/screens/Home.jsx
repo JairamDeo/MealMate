@@ -5,11 +5,9 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
-  const [loading, setLoading] = useState(true); // 🆕 loading state
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const loadData = async () => {
-    setLoading(true); // 🆕 start loading
     try {
       let response = await fetch(`${backendUrl}/api/foodData`, {
         method: "POST",
@@ -22,8 +20,6 @@ export default function Home() {
       setFoodCat(response[1]);
     } catch (error) {
       console.error('Error loading data:', error);
-    } finally {
-      setLoading(false); // 🆕 stop loading
     }
   };
 
@@ -76,11 +72,9 @@ export default function Home() {
             key={index}
             src={img.src}
             alt={img.alt}
-            className={`absolute w-full h-full top-0 left-0 transition-opacity duration-700 ease-in-out brightness-50 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute w-full h-full top-0 left-0 transition-opacity duration-700 ease-in-out brightness-50 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
             style={{ objectFit: 'cover' }}
-            loading="lazy" // 🆕 Lazy load carousel images
+            loading="lazy"
           />
         ))}
 
@@ -102,18 +96,13 @@ export default function Home() {
 
       {/* Food categories and cards */}
       <div className="container mx-auto px-4 py-6">
-        {loading ? ( // 🆕 Show loading while fetching
-          <div className="text-center text-xl font-semibold text-gray-600 animate-pulse">
-            Loading food items...
-          </div>
-        ) : (
-          foodCat && foodCat.length !== 0 &&
+        {foodCat.length > 0 &&
           foodCat.map((data) => (
             <div key={data._id} className="mb-8">
               <div className="text-3xl mb-2">{data.CategoryName}</div>
               <hr className="mb-4" />
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {foodItem && foodItem.length !== 0 ? (
+                {foodItem.length > 0 ? (
                   foodItem
                     .filter(
                       (item) =>
@@ -132,8 +121,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-          ))
-        )}
+          ))}
       </div>
     </div>
   );

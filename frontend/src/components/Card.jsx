@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatchCart, useCart } from './ContextReduce';
 import { useNavigate } from 'react-router-dom'; // ✅ import useNavigate
 
-export default function Card(props) {
+function Card(props) {
     let dispatch = useDispatchCart();
     let data = useCart();
     const priceRef = useRef();
@@ -135,3 +135,5 @@ export default function Card(props) {
         </div>
     );
 }
+
+export default React.memo(Card);
