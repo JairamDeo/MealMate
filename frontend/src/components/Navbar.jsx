@@ -1,18 +1,9 @@
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useCallback,
-  Suspense,
-  lazy,
-} from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Modal from "../Modal";
+import Cart from "../screens/Cart";
 import { useCart } from "./ContextReduce";
 import { ShoppingCart } from "lucide-react";
-
-// Lazy load Modal and Cart
-const Modal = lazy(() => import("../Modal"));
-const Cart = lazy(() => import("../screens/Cart"));
 
 export default function Navbar() {
   const data = useCart();
@@ -64,6 +55,7 @@ export default function Navbar() {
     <nav className="bg-[#1E1E1E] text-white shadow-md sticky top-0 z-50 border-b border-[#2C2C2C]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          {/* Logo + Home */}
           <div className="flex items-center space-x-6">
             <Link
               to="/"
@@ -79,8 +71,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Cart & Hamburger */}
+          {/* Mobile Hamburger + Cart Icon container */}
           <div className="flex items-center space-x-4 lg:hidden">
+            {/* Cart Icon Button */}
             <button
               onClick={() => setCartView(true)}
               className="relative text-white hover:text-[#0DCAF0] focus:outline-none"
@@ -90,6 +83,7 @@ export default function Navbar() {
               {data.length > 0 && <CartBadge count={data.length} />}
             </button>
 
+            {/* Hamburger */}
             <button
               ref={buttonRef}
               onClick={handleToggle}
@@ -112,7 +106,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Desktop Nav */}
+          {/* Desktop Menu */}
           <div className="hidden lg:flex lg:items-center lg:space-x-6">
             {localStorage.getItem("authToken") && (
               <Link
@@ -149,6 +143,12 @@ export default function Navbar() {
                   {data.length > 0 && <CartBadge count={data.length} />}
                 </button>
 
+                {cartView && (
+                  <Modal onClose={() => setCartView(false)}>
+                    <Cart />
+                  </Modal>
+                )}
+
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 bg-[#DC3545] text-white rounded-md font-semibold hover:bg-red-700 transition duration-300"
@@ -161,7 +161,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Slide from right */}
       <div
         ref={mobileMenuRef}
         className="lg:hidden fixed top-0 right-0 w-1/2 h-full bg-[#1E1E1E] border-l border-[#2C2C2C] translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto pt-16 px-4 pb-4 shadow-xl z-40"
@@ -216,18 +216,11 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* ✅ Lazy Loaded Modal with Cart */}
+      {/* Cart Modal */}
       {cartView && (
-        <Suspense
-          fallback={
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            </div>
-          }
-        >
-          <Modal onClose={() => setCartView(false)}>
-            <Cart />
-          </Modal>
-        </Suspense>
+        <Modal onClose={() => setCartView(false)}>
+          <Cart />
+        </Modal>
       )}
     </nav>
   );
