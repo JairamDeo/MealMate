@@ -11,9 +11,9 @@ mongoDB();
 
 const FrontendURL = process.env.FRONTEND_URL;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.get("/", (req, res) => {
+  res.status(200).send("Server is running");
+});
 
 // Middleware CORS handling
 app.use((req,res,next)=>{
