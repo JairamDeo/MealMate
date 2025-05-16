@@ -62,7 +62,7 @@ export default function Navbar() {
           <div className="flex items-center space-x-6">
             <Link
               to="/"
-              className="text-3xl font-serif italic font-semibold text-white hover:text-[#0D6EFD] transition duration-300"
+              className="text-3xl font-serif font-semibold text-white hover:text-[#0D6EFD] transition duration-300"
             >
               MealMate
             </Link>
