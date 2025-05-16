@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Modal from '../Modal';
 import Cart from "../screens/Cart";
 import { useCart } from "./ContextReduce";
+import { ShoppingCart } from "lucide-react";
 
 export default function Navbar() {
-
-  let data = useCart(); 
+  let data = useCart();
   const [cartView, setCartView] = useState(false);
-  const mobileMenuRef = useRef(null); 
-  const buttonRef = useRef(null); 
+  const mobileMenuRef = useRef(null);
+  const buttonRef = useRef(null);
   const navigate = useNavigate();
 
   const handleToggle = () => {
@@ -74,22 +74,37 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Hamburger */}
-          <button
-            ref={buttonRef}
-            onClick={handleToggle}
-            className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-[#0DCAF0] hover:bg-[#2C2C2C] focus:outline-none lg:hidden"
-          >
-            <svg
-              className="block h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Mobile Hamburger + Cart Icon container */}
+          <div className="flex items-center space-x-4 lg:hidden">
+            {/* Cart Icon Button */}
+            <button
+              onClick={() => setCartView(true)}
+              className="relative text-white hover:text-[#0DCAF0] focus:outline-none"
+              aria-label="Open Cart"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+              <ShoppingCart size={24} />
+              {data.length > 0 && (
+                <CartBadge count={data.length} />
+              )}
+            </button>
+
+            {/* Hamburger */}
+            <button
+              ref={buttonRef}
+              onClick={handleToggle}
+              className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-[#0DCAF0] hover:bg-[#2C2C2C] focus:outline-none"
+            >
+              <svg
+                className="block h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex lg:items-center lg:space-x-6">
@@ -119,11 +134,13 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center space-x-4 ml-6">
+                {/* Cart Icon Button for Desktop */}
                 <button
                   onClick={() => setCartView(true)}
-                  className="relative px-4 py-2 bg-[#0DCAF0] text-[#212529] rounded-md font-semibold hover:bg-[#F8F9FA] transition duration-300 flex items-center"
+                  className="relative p-2 bg-[#0DCAF0] text-[#212529] rounded-md font-semibold hover:bg-[#F8F9FA] transition duration-300 flex items-center"
+                  aria-label="Open Cart"
                 >
-                  <span>My Cart</span>
+                  <ShoppingCart size={24} />
                   {data.length > 0 && <CartBadge count={data.length} />}
                 </button>
 
@@ -146,8 +163,8 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu - Slide from right */}
-      <div 
-        ref={mobileMenuRef} 
+      <div
+        ref={mobileMenuRef}
         className="lg:hidden fixed top-0 right-0 w-1/2 h-full bg-[#1E1E1E] border-l border-[#2C2C2C] translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto pt-16 px-4 pb-4 shadow-xl z-40"
       >
         <Link
@@ -187,16 +204,7 @@ export default function Navbar() {
           </>
         ) : (
           <div className="flex flex-col space-y-2">
-            <button
-              onClick={() => {
-                setCartView(true);
-                handleToggle();
-              }}
-              className="relative px-3 py-2 bg-[#0DCAF0] text-[#212529] rounded-md font-semibold hover:bg-[#F8F9FA] transition duration-300"
-            >
-              <span>My Cart</span>
-              {data.length > 0 && <CartBadge count={data.length} />}
-            </button>
+            {/* No My Cart button here on mobile menu */}
             <button
               onClick={() => {
                 handleLogout();
@@ -209,6 +217,13 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Cart Modal for mobile & desktop */}
+      {cartView && (
+        <Modal onClose={() => setCartView(false)}>
+          <Cart />
+        </Modal>
+      )}
     </nav>
   );
 }
