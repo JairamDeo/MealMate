@@ -5,26 +5,32 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [foodCat, setFoodCat] = useState([]);
   const [foodItem, setFoodItem] = useState([]);
+  const [loading, setLoading] = useState(true); // 🆕 loading state
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const loadData = async () => {
-    let response = await fetch(`${backendUrl}/api/foodData`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    response = await response.json();
-
-    setFoodItem(response[0]);
-    setFoodCat(response[1]);
-  }
+    setLoading(true); // 🆕 start loading
+    try {
+      let response = await fetch(`${backendUrl}/api/foodData`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      response = await response.json();
+      setFoodItem(response[0]);
+      setFoodCat(response[1]);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false); // 🆕 stop loading
+    }
+  };
 
   useEffect(() => {
     loadData();
-  }, [])
+  }, []);
 
-  // Carousel state for current slide
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const images = [
@@ -42,7 +48,6 @@ export default function Home() {
     }
   ];
 
-  // Handlers for carousel buttons
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
@@ -55,7 +60,6 @@ export default function Home() {
     <div>
       {/* Carousel */}
       <div className="relative w-full h-64 md:h-96 overflow-hidden">
-        {/* Search input centered over carousel */}
         <div className="absolute top-1/2 left-1/2 z-20 w-2/3 md:w-1/3 transform -translate-x-1/2 -translate-y-1/2">
           <input
             type="search"
@@ -67,7 +71,6 @@ export default function Home() {
           />
         </div>
 
-        {/* Images */}
         {images.map((img, index) => (
           <img
             key={index}
@@ -77,11 +80,10 @@ export default function Home() {
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
             style={{ objectFit: 'cover' }}
-            loading="lazy"
+            loading="lazy" // 🆕 Lazy load carousel images
           />
         ))}
 
-        {/* Carousel controls */}
         <button
           onClick={prevSlide}
           aria-label="Previous Slide"
@@ -100,35 +102,39 @@ export default function Home() {
 
       {/* Food categories and cards */}
       <div className="container mx-auto px-4 py-6">
-        {
-          foodCat && foodCat.length !== 0 ?
-            foodCat.map((data) => (
-              <div key={data._id} className="mb-8">
-                <div className="text-3xl mb-2">{data.CategoryName}</div>
-                <hr className="mb-4" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {foodItem && foodItem.length !== 0
-                    ? foodItem
-                      .filter(
-                        (item) =>
-                          item.CategoryName === data.CategoryName &&
-                          item.name.toLowerCase().includes(search.toLowerCase())
-                      )
-                      .map((filterItems) => (
-                        <Card
-                          key={filterItems._id}
-                          foodItem={filterItems}
-                          options={filterItems.options[0]}
-                        />
-                      ))
-                    : <div>No such data found</div>
-                  }
-                </div>
+        {loading ? ( // 🆕 Show loading while fetching
+          <div className="text-center text-xl font-semibold text-gray-600 animate-pulse">
+            Loading food items...
+          </div>
+        ) : (
+          foodCat && foodCat.length !== 0 &&
+          foodCat.map((data) => (
+            <div key={data._id} className="mb-8">
+              <div className="text-3xl mb-2">{data.CategoryName}</div>
+              <hr className="mb-4" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {foodItem && foodItem.length !== 0 ? (
+                  foodItem
+                    .filter(
+                      (item) =>
+                        item.CategoryName === data.CategoryName &&
+                        item.name.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .map((filterItems) => (
+                      <Card
+                        key={filterItems._id}
+                        foodItem={filterItems}
+                        options={filterItems.options[0]}
+                      />
+                    ))
+                ) : (
+                  <div>No such data found</div>
+                )}
               </div>
-            ))
-            : null
-        }
+            </div>
+          ))
+        )}
       </div>
     </div>
-  )
+  );
 }
