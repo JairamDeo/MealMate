@@ -1,269 +1,130 @@
-📊 MongoDB Setup Guide for MealMate Project
-This guide will walk you through setting up MongoDB for the MealMate project on Windows.
-📋 Table of Contents
-https://github.com/JairamDeo/MealMate
-open this click on foodCategory.json click on it and from from right side donwload raw file in you system.
-same for foodData2.json click on it and from from right side donwload raw file in you system.
 
-Prerequisites
-Windows Setup
-MongoDB Atlas Setup
-Importing Data
-Connecting to Backend
+# 🍽️ MealMate MongoDB Setup Guide (Windows)
 
-🛠️ Prerequisites
+This guide will walk you through setting up MongoDB for the MealMate project on **Windows**.
 
-📁 MealMate project files (Download from GitHub Repository https://github.com/JairamDeo/MealMate)
-🌐 Internet connection
-📝 MongoDB Atlas account (free tier is sufficient)
+## 📋 Table of Contents
 
-🪟 Windows Setup
-1️⃣ Installing MongoDB Community Server
-🔷 Download MongoDB Community Server
+- [Prerequisites](#-prerequisites)
+- [Windows Setup](#-windows-setup)
+- [MongoDB Atlas Setup](#️-mongodb-atlas-setup)
+- [Importing Data](#-importing-data)
+- [Connecting to Backend](#-connecting-to-backend)
 
-🌐 Go to MongoDB Community Server Download Page
-✅ Select version 6.0 or above
-⚡ OR directly download using this link: https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.23-signed.msi
+---
 
-🔷 Installation Process
+## 🛠️ Prerequisites
 
-🚀 Run the downloaded .msi file
-👉 Follow the installation wizard
-⚠️ Important: Add MongoDB bin path to environment variables
+- 📁 MealMate project files: [GitHub Repository](https://github.com/JairamDeo/MealMate)
+- 🌐 Internet connection
+- 📝 MongoDB Atlas account (free tier is enough)
 
-📂 Typically: C:\Program Files\MongoDB\Server\6.0\bin
+---
 
+## 🪟 Windows Setup
 
+### 1️⃣ Install MongoDB Community Server
 
-2️⃣ Installing MongoDB Database Tools
-🔷 Download MongoDB Database Tools
+- 🔗 [Download MongoDB Server v6.0+](https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.23-signed.msi)
+- 💿 Install the MSI and **add bin path** to Environment Variables:  
+  `C:\Program Files\MongoDB\Server\6.0\bin`
 
-💾 Download the MongoDB Database Tools: mongodb-database-tools-windows-x86_64-100.12.0.msi
+### 2️⃣ Install MongoDB Database Tools
 
-🔷 Installation Process
+- 🔗 [Download Tools](https://www.mongodb.com/try/download/database-tools)
+- 💿 Add to Environment Variables:  
+  `C:\Program Files\MongoDB\Tools\100\bin`
 
-🚀 Run the downloaded .msi file
-👉 Follow the installation wizard
-⚠️ Important: Add the bin path to environment variables
+### 3️⃣ Start MongoDB Service
 
-📂 Typically: C:\Program Files\MongoDB\Tools\100\bin
+- 🧑‍💻 Open CMD as Administrator  
+- Type: `mongod`  
+  ❌ If error: Create folders:
+  ```
+  C:\data
+  C:\data\db
+  ```
+- Run `mongod` again (keep open)
 
+---
 
+## ☁️ MongoDB Atlas Setup
 
-3️⃣ Setup MongoDB Service
+### 🔐 Create MongoDB Atlas Account
 
-💻 Open Command Prompt as Administrator
-🖥️ Run the command: mongod
-❌ If you see an error, create these folders:
+- 🔗 [Sign Up/Login](https://account.mongodb.com/account/login)
 
-📁 Create folder C:\data
-📁 Inside that, create folder C:\data\db
+### 📋 Create a New Project
 
+- Name: `MealMate`, then "Create Project"
 
-🔄 Run mongod again (keep this window open)
+### 🏗️ Create Cluster
 
-☁️ MongoDB Atlas Setup
+- Select **FREE tier**
+- Default Region (Mumbai `ap-south-1`)
+- Name: `Cluster0` (or custom)
 
-🔐 Create MongoDB Atlas Account
+### 🔒 Configure Security
 
-🌐 Go to MongoDB Atlas Login Page
-📝 Sign up or log in to your account
+- Username: `mealmate1`
+- Password: `mealmate`
+- ✅ Save credentials
+- Allow IP: `Access from Anywhere`
 
+### 📊 Create Database & Collections
 
-📋 Create a New Project
+- Database name: `MealMateDB`
+- Collection name: `sample` (temp)
 
-🆕 Click "New Project"
-✏️ Enter project name (e.g., "MealMate")
-▶️ Click "Next" and keep default settings
-✅ Click "Create Project"
-👥 You can add members if you have any
+---
 
+## 📤 Importing Data
 
-🏗️ Create a Cluster
+### 🔽 Download JSON Files
 
-➕ After creating project, you'll see option to "Create a Cluster" - click on it
-🔍 You'll see option to deploy your cluster - select FREE option (third one)
-⚙️ Inside configuration, enter cluster name (default is "Cluster0")
-☁️ Select provider as AWS
-🌏 It will select region by default (Mumbai ap-south-1) - keep as is
-🚀 Click "Create Cluster" or "Create Deployment" button
+- From [MealMate Repo](https://github.com/JairamDeo/MealMate):
+  - [foodCategory.json](https://github.com/JairamDeo/MealMate/blob/main/foodCategory.json) → Download raw
+  - [foodData2.json](https://github.com/JairamDeo/MealMate/blob/main/foodData2.json) → Download raw
 
+### ⚙️ Get Import Command
 
-🔒 Configure Security
+- On MongoDB Atlas → Cluster → "Command Line Tools" → Copy `mongoimport` template
 
-🔄 When prompted with "Connect to Cluster0" form:
-👤 Enter username as you want (e.g., "meal-mate")
-🔑 Create a password (IMPORTANT: save these credentials somewhere as you'll need them later)
-✅ Click "Create User" button
-🔄 Then click on "Choose a Connection Method"
-❌ Close this form using the X button
-🔒 Go to "Network Access" from left side dashboard menu
-➕ Click "Add IP Address"
-🌐 Choose "Enter Your Current IP Address" or "Access From Anywhere" for testing (you can change this later)
+### 💻 Example Import Commands:
 
-
-📊 Create Database Collections
-
-💾 Go to "Databases" in the left sidebar
-🗂️ Click on "Clusters"
-🔍 Click on "Cluster0" (or whatever name you gave)
-📋 Go to "Collections"
-⏳ It will take some time to load
-⚠️ DO NOT click on "Load Sample Data" - select "Add My Own Data"
-📝 Enter your database name (e.g., "MealMateDB") - this is your database name
-📋 Enter collection name "sample" (no need to select additional preferences)
-✅ Click "Create"
-
-
-
-📤 Importing Data
-Now we'll import the MealMate food items and categories from JSON files. This is why we installed the MongoDB tools earlier - we need to upload the complete schema for food items and food category from the JSON files in the GitHub repo.
-1️⃣ Get Import Command Template
-
-🔧 In MongoDB Atlas, click on "Cmd Line Tools"
-📜 Scroll down to "Data Import and Export Tools"
-📋 Copy the command inside mongoimport section, which looks like:
-
-mongoimport --uri mongodb+srv://mealmate1:<PASSWORD>@cluster0.xzf9usp.mongodb.net/<DATABASE> --collection <COLLECTION> --type <FILETYPE> --file <FILENAME>
-2️⃣ Start MongoDB Daemon
-
-💻 Open Command Prompt and type mongod and press Enter
-
-🔄 This is a daemon process which runs in the background
-❌ If you see something like "failed" or errors, go to C drive and:
-
-📁 Create folder C:\Data
-📁 Inside it create folder C:\Data\db
-🔄 Run mongod command again - this time it should work
-
-
-⚠️ Keep this running and minimize Command Prompt (don't close it!)
-
-
-
-3️⃣ Prepare Import Commands
-
-💻 Open another Command Prompt window
-🔄 We need to modify the template command to import our two files: foodCategory.json and foodData2.json
-✏️ Start with:
-
-mongoimport --uri
-
-📋 Then paste the copied command template:
-
-mongodb+srv://mealmate1:<PASSWORD>@cluster0.xzf9usp.mongodb.net/<DATABASE> --collection <COLLECTION> --type <FILETYPE> --file <FILENAME>
-📄 For the First File (foodData2.json):
-
-🔄 Replace placeholders in the command:
-
-📂 Replace <FILENAME> with the complete correct relative path to the file including extension:
---file "C:\Users\jaira\Desktop\MealMate\foodData2.json"
-
-🔄 Instead of --type <FILETYPE> write:
---jsonArray
-
-📋 Change <COLLECTION> for the first file to:
---collection food_items
-
-💾 Enter your database name in place of <DATABASE>, e.g., "MealMateDB":
-mongodb+srv://mealmate1:<PASSWORD>@cluster0.xzf9usp.mongodb.net/MealMateDB
-
-🔑 Replace <PASSWORD> with the password you created earlier:
-mongodb+srv://mealmate1:mealmate@cluster0.xzf9usp.mongodb.net/MealMateDB
-
-
-
-📋 Your final command should look like this:
-
+**Import foodData2.json**
+```bash
 mongoimport --uri mongodb+srv://mealmate1:mealmate@cluster0.xzf9usp.mongodb.net/MealMateDB --collection food_items --jsonArray --file "C:\Users\jaira\Desktop\MealMate\foodData2.json"
+```
 
-✅ Check that all syntax in the command is correct
-🔄 When you run this, you should see output like:
-
-connected to: mongodb+srv://[**REDACTED**]@cluster0.xzf9usp.mongodb.net/MealMateDB
-12 document(s) imported successfully. 0 document(s) failed to import.
-
-🔍 You can check MongoDB Atlas inside Collections - "food_items" should be created with the imported data
-
-📄 For the Second File (foodCategory.json):
-
-🔄 Do the same process but change the collection name:
-
-📋 For this file, collection name should be "foodCategory":
---collection foodCategory
-
-⚠️ Make sure you change the collection name otherwise this file's data will go into your previous collection and you'll have to manually delete it
-
-
-📋 Your final command for the second file should look like:
-
+**Import foodCategory.json**
+```bash
 mongoimport --uri mongodb+srv://mealmate1:mealmate@cluster0.xzf9usp.mongodb.net/MealMateDB --collection foodCategory --jsonArray --file "C:\Users\jaira\Desktop\MealMate\foodCategory.json"
+```
 
-⚠️ Make sure:
+✅ Collections `food_items` and `foodCategory` should appear with data in Atlas.
 
-📄 For file foodCategory.json → collection name is foodCategory
-📄 For file foodData2.json → collection name is food_items
-🚫 DON'T change collection names - enter them exactly as shown as we use these same names in the backend
+---
 
+## 🔌 Connecting to Backend
 
-🔄 When you run this, you should see output like:
+1. In MongoDB Atlas, go to:
+   - Cluster → **Connect** → **Drivers**
+   - Choose Driver: **Node.js**
+   - Version: **2.2.12 or later**
 
-2025-05-18T01:18:09.243+0530    3 document(s) imported successfully. 0 document(s) failed to import.
-
-🔍 Check inside MongoDB Atlas collections - both collections should be created with their data
-✅ You can close both Command Prompt windows now
-
-🔌 Connecting to Backend
-Now that you've set up the database, you need to connect it to the MealMate backend:
-
-🌐 Open MongoDB Atlas
-📋 Click on "Clusters" from the left side of dashboard
-🔗 You'll see a "Connect" button beside your Cluster name - click on it
-💻 Click on "Drivers" from "Connect to your application"
-📋 Inside Driver select "Node.js"
-📋 For Version, select "2.2.12 or later" (I have installed this in code - if you select another version, it may cause issues)
-💻 Run the following command in your terminal (inside the backend folder root):
-
+2. Install driver in backend:
+```bash
 npm install mongodb@2.2.12
+```
 
-📋 Copy the URI connection string from Step 3 "Add your connection string into your application code":
+3. Add Mongo URI to `.env` in backend:
 
-mongodb://mealmate1:<db_password>@ac-u2ck0vw-shard-00-00.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-01.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-02.xzf9usp.mongodb.net:27017/?ssl=true&replicaSet=atlas-2hfxgc-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0
-
-🔑 Enter your database password correctly (whatever you chose when setting up MongoDB Atlas)
-📝 In your backend folder, open the .env file and add the connection string:
-
+```env
 MONGO_URI=mongodb://mealmate1:<db_password>@ac-u2ck0vw-shard-00-00.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-01.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-02.xzf9usp.mongodb.net:27017/?ssl=true&replicaSet=atlas-2hfxgc-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0
-(Replace <db_password> with your actual password)
-🎉 Success!
-Your database is set up successfully!
-You can now start the backend server as instructed in the backend folder README.
+```
+🔑 Replace `<db_password>` with your real password.
 
-📝 Note: This setup guide preserves all original instructions for Windows configuration. If you encounter any issues, please check the MongoDB documentation or the MealMate repository for additional help.
-Connecting to Backend
-Now that you've set up the database, you need to connect it to the MealMate backend:
+---
 
-Open MongoDB Atlas
-Click on "Clusters" from the left side of dashboard
-You'll see a "Connect" button beside your Cluster name - click on it
-Click on "Drivers" from "Connect to your application"
-Inside Driver select "Node.js"
-For Version, select "2.2.12 or later" (I have installed this in code - if you select another version, it may cause issues)
-Run the following command in your terminal (inside the backend folder root):
-
-npm install mongodb@2.2.12
-
-Copy the URI connection string from Step 3 "Add your connection string into your application code":
-
-mongodb://mealmate1:<db_password>@ac-u2ck0vw-shard-00-00.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-01.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-02.xzf9usp.mongodb.net:27017/?ssl=true&replicaSet=atlas-2hfxgc-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0
-
-Enter your database password correctly (whatever you chose when setting up MongoDB Atlas)
-In your backend folder, open the .env file and add the connection string:
-
-MONGO_URI=mongodb://mealmate1:<db_password>@ac-u2ck0vw-shard-00-00.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-01.xzf9usp.mongodb.net:27017,ac-u2ck0vw-shard-00-02.xzf9usp.mongodb.net:27017/?ssl=true&replicaSet=atlas-2hfxgc-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0
-(Replace <db_password> with your actual password)
-🎉 Success!
-Your database is set up successfully!
-You can now start the backend server as instructed in the backend folder README.
-
-📝 Note: This setup guide preserves all original instructions for Windows configuration. If you encounter any issues, please check the MongoDB documentation or the MealMate repository for additional help.
+🎉 **Success!** MongoDB is now connected to the MealMate project.
