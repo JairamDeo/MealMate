@@ -47,6 +47,10 @@ npm install
 
 ---
 
+```bash
+vim .env
+```
+
 ## 🔧 Environment Configuration
 
 Create a `.env` file in the root backend directory with the following variables:
