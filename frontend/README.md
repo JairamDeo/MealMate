@@ -39,6 +39,10 @@ git clone https://github.com/JairamDeo/MealMate.git
 cd MealMate/frontend
 ```
 
+```bash
+vim .env
+```
+
 ## 🔧 Environment Configuration
 
 Before running the frontend app, create a `.env` file in the root directory and add the following line:
