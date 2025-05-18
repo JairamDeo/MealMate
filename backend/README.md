@@ -109,7 +109,7 @@ Create a `.env` file in the root backend directory with the following variables:
 ```bash
 PORT=5000
 FRONTEND_URL=http://localhost:5173
-JWT_Secret=your_64_byte_hex_string_here
+JWT_SECRET=your_64_byte_hex_string_here
 MONGO_URI=your_mongodb_connection_string_here
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
