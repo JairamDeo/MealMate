@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatchCart, useCart } from './ContextReduce';
-import { useNavigate } from 'react-router-dom'; // ✅ import useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import Cookies from 'js-cookie';
 
 function Card(props) {
     let dispatch = useDispatchCart();
@@ -18,7 +19,7 @@ function Card(props) {
     let finalPrice = qty * parseInt(options[size]);
 
     const handleAddToCart = async () => {
-        const authToken = localStorage.getItem("authToken");
+        const authToken = Cookies.get("authToken");
 
         if (!authToken) {
             setShowModal(true); // 🔐 Show modal if not logged in

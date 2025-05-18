@@ -4,6 +4,7 @@ import Modal from "../Modal";
 import Cart from "../screens/Cart";
 import { useCart } from "./ContextReduce";
 import { ShoppingCart } from "lucide-react";
+import Cookies from 'js-cookie';
 
 export default function Navbar() {
   const data = useCart();
@@ -40,8 +41,8 @@ export default function Navbar() {
   }, [handleClickOutside]);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userEmail");
+    Cookies.remove("authToken");
+    Cookies.remove("userEmail");
     navigate("/login");
   }, [navigate]);
 
@@ -108,7 +109,7 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex lg:items-center lg:space-x-6">
-            {localStorage.getItem("authToken") && (
+            {Cookies.get("authToken") && (
               <Link
                 to="/myorder"
                 className="text-lg font-medium text-white hover:text-[#0DCAF0] transition duration-300"
@@ -117,7 +118,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {!localStorage.getItem("authToken") ? (
+            {!Cookies.get("authToken") ? (
               <div className="flex space-x-3 ml-6">
                 <Link
                   to="/login"
@@ -174,7 +175,7 @@ export default function Navbar() {
           Home
         </Link>
 
-        {localStorage.getItem("authToken") && (
+        {Cookies.get("authToken") && (
           <Link
             to="/myorder"
             className="block px-3 py-2 text-white hover:bg-[#2C2C2C] rounded-md mb-2 transition duration-300"
@@ -184,7 +185,7 @@ export default function Navbar() {
           </Link>
         )}
 
-        {!localStorage.getItem("authToken") ? (
+        {!Cookies.get("authToken") ? (
           <>
             <Link
               to="/login"

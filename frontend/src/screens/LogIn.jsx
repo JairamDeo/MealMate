@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from "lucide-react";
+import Cookies from 'js-cookie';
 
 export default function LogIn() {
   const [credentials, setcredentials] = useState({ email: "", password: "" });
@@ -69,8 +70,9 @@ export default function LogIn() {
         setTimeout(() => {
           // Extract email from Google response
           const decodedToken = JSON.parse(atob(response.credential.split('.')[1]));
-          localStorage.setItem("userEmail", decodedToken.email);
-          localStorage.setItem("authToken", data.authToken);
+          // Set cookies instead of localStorage
+          Cookies.set('userEmail', decodedToken.email, { expires: 7 });
+          Cookies.set('authToken', data.authToken, { expires: 7 });
           navigate("/");
         }, 2000);
       } else {
@@ -105,8 +107,9 @@ export default function LogIn() {
       if (json.success) {
         setShowSuccessAnimation(true);
         setTimeout(() => {
-          localStorage.setItem("userEmail", credentials.email);
-          localStorage.setItem("authToken", json.authToken);
+          // Set cookies instead of localStorage
+          Cookies.set('userEmail', credentials.email, { expires: 7 });
+          Cookies.set('authToken', json.authToken, { expires: 7 });
           navigate("/");
         }, 2000);
       }
