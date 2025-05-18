@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from "lucide-react";
 
@@ -9,6 +9,77 @@ export default function Signup() {
 
   let navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  useEffect(() => {
+    // Load Google API script
+    const loadGoogleScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+      
+      script.onload = () => {
+        initializeGoogleButton();
+      };
+    };
+    
+    loadGoogleScript();
+  }, []);
+
+  const initializeGoogleButton = () => {
+    if (window.google) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleResponse,
+        context: 'signup',
+        ux_mode: 'popup',
+        auto_select: false, // Prevents auto-selection of an account
+      });
+      
+      window.google.accounts.id.renderButton(
+        document.getElementById('googleSignInDiv'),
+        { 
+          theme: 'filled_black',
+          size: 'large', 
+          width: '100%',
+          text: 'continue_with', // "Continue with Google" instead of "Sign in with Google"
+          shape: 'rectangular',
+          logo_alignment: 'center'
+        }
+      );
+    }
+  };
+
+  const handleGoogleResponse = async (response) => {
+    try {
+      const googleResponse = await fetch(`${backendUrl}/api/google-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ tokenId: response.credential })
+      });
+      
+      const data = await googleResponse.json();
+      
+      if (data.success) {
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          // Extract email from Google response
+          const decodedToken = JSON.parse(atob(response.credential.split('.')[1]));
+          localStorage.setItem("userEmail", decodedToken.email);
+          localStorage.setItem("authToken", data.authToken);
+          navigate("/");
+        }, 2000);
+      } else {
+        alert("Google signup failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      alert("An error occurred during Google signup");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,7 +119,7 @@ export default function Signup() {
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
           <div className="text-center">
             <img src="/signup-success.gif" alt="Success" className="w-36 md:w-40 mx-auto mb-4" />
-            <h3 className="text-white text-xl font-semibold">Login Successful!</h3>
+            <h3 className="text-white text-xl font-semibold">Signup Successful!</h3>
           </div>
         </div>
       )}
@@ -87,10 +158,7 @@ export default function Signup() {
         <button type="submit" className="w-full py-2 bg-orange-500 hover:bg-orange-600 rounded text-white font-semibold transition">Sign Up</button>
         <Link to="/login" className="block w-full text-center mt-3 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white transition">Already a User</Link>
         <div className="mt-4 text-center">
-          <button className="w-full flex items-center justify-center gap-3 py-2 bg-white text-gray-800 font-medium rounded hover:bg-gray-100 transition">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-            Continue with Google
-          </button>
+          <div id="googleSignInDiv" className="w-full"></div>
         </div>
       </form>
     </div>

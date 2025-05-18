@@ -6,8 +6,12 @@ require('dotenv').config();
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require('google-auth-library');
 
 const jwtSecret = process.env.JWT_Secret;
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const client = new OAuth2Client(googleClientId, googleClientSecret);
 
 router.post("/createuser", [
     // username must be an email
@@ -32,7 +36,7 @@ router.post("/createuser", [
                 email: req.body.email,
                 location: req.body.location
             })         
-            const authToken = jwt.sign({ email: User.email },jwtSecret );
+            const authToken = jwt.sign({ email: User.email }, jwtSecret);
             return res.json({ success: true, authToken:authToken });
         } catch (error) {
             console.log(error)
@@ -62,19 +66,19 @@ router.post("/loginuser", [
                 return res.status(400).json({ errors: "Try loggin with correct credentials" });
             }
 
-            const pwdCompare = await bcrypt.compare(req.body.password,userData.password)
+            const pwdCompare = await bcrypt.compare(req.body.password, userData.password)
             if (!pwdCompare) {
                 return res.status(400).json({ errors: "Try loggin with correct credentials" });
             }
 
             const data = {
                 user:{
-                    id:userData.id
+                    id: userData.id
                 }
             }
 
             const authToken = jwt.sign(data, jwtSecret)
-            return res.json({ success: true, authToken:authToken });
+            return res.json({ success: true, authToken: authToken });
 
         } catch (error) {
             console.log(error)
@@ -82,5 +86,57 @@ router.post("/loginuser", [
         }
     })
 
+// Google OAuth login endpoint
+router.post("/google-login", async (req, res) => {
+    const { tokenId } = req.body;
+    
+    try {
+        // Verify the Google token
+        const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: googleClientId
+        });
+        
+        const payload = ticket.getPayload();
+        const { email, name, picture, email_verified } = payload;
+        
+        // Ensure email is verified
+        if (!email_verified) {
+            return res.status(400).json({ success: false, error: "Email not verified with Google" });
+        }
+        
+        // Check if user exists
+        let user = await User.findOne({ email });
+        
+        if (!user) {
+            // Create new user if not exists
+            // Generate a random password for Google users
+            const salt = await bcrypt.genSalt(10);
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const secPassword = await bcrypt.hash(randomPassword, salt);
+            
+            user = await User.create({
+                name: name,
+                email: email,
+                password: secPassword,
+                location: "Not specified" // Default location
+            });
+        }
+        
+        // Create JWT token (same as regular login)
+        const data = {
+            user: {
+                id: user.id
+            }
+        }
+        
+        const authToken = jwt.sign(data, jwtSecret);
+        return res.json({ success: true, authToken: authToken });
+        
+    } catch (error) {
+        console.log("Google login error:", error);
+        res.status(400).json({ success: false, error: "Google authentication failed" });
+    }
+});
 
 module.exports = router;
