@@ -47,6 +47,57 @@ npm install
 
 ---
 
+🔐 Google OAuth Setup
+To enable Google Login in your application, follow these steps:
+
+✅ Get Google OAuth Credentials
+Go to the Google Cloud Console
+
+Create a new project or select an existing one.
+
+Navigate to: APIs & Services > Credentials
+
+Click "Create Credentials" > OAuth client ID
+
+Set Application type to Web application
+
+Under Authorized JavaScript origins, add:
+
+```bash
+http://localhost:5173
+```
+Under Authorized redirect URIs, add:
+
+```bash
+http://localhost:5000/api/google-login
+```
+Click Create, and copy the Client ID and Client Secret
+
+⚙️ Add to Environment Files
+Backend .env
+```bash
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+```
+
+Frontend .env
+```bash
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+📌 Note: The VITE_ prefix is required for environment variables in Vite-based React apps.
+
+Now, you're all set to implement and use Google OAuth in your MERN application! 🎉
+
+> 🔑 To generate a secure JWT secret key, run this command in your terminal:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Replace `your_64_byte_hex_string_here` with the generated key in backend env file.
+
+---
+
 ```bash
 vim .env
 ```
@@ -63,16 +114,6 @@ MONGO_URI=your_mongodb_connection_string_here
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 ```
-
-> 🔑 To generate a secure JWT secret key, run this command in your terminal:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-Replace `your_64_byte_hex_string_here` with the generated key.
-
----
 
 ## 🚀 Running the Server
 
