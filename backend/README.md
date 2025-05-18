@@ -61,12 +61,12 @@ Click "Create Credentials" > OAuth client ID
 
 Set Application type to Web application
 
-Under Authorized JavaScript origins, add:
+Under Authorized JavaScript origins, add your frontend url :-
 
 ```bash
 http://localhost:5173
 ```
-Under Authorized redirect URIs, add:
+Under Authorized redirect URIs, add your backend url with /api/google-login :-
 
 ```bash
 http://localhost:5000/api/google-login
