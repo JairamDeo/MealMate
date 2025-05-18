@@ -8,7 +8,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require('google-auth-library');
 
-const jwtSecret = process.env.JWT_Secret;
+const JWT_SECRET = process.env.JWT_SECRET;
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const client = new OAuth2Client(googleClientId, googleClientSecret);
@@ -48,7 +48,7 @@ router.post("/createuser", [
                     id: req.body.email
                 }
             }
-            const authToken = jwt.sign(data, jwtSecret);
+            const authToken = jwt.sign(data, JWT_SECRET);
             return res.json({ success: true, authToken: authToken });
         } catch (error) {
             console.log(error)
@@ -89,7 +89,7 @@ router.post("/loginuser", [
                 }
             }
 
-            const authToken = jwt.sign(data, jwtSecret)
+            const authToken = jwt.sign(data, JWT_SECRET)
             return res.json({ success: true, authToken: authToken });
 
         } catch (error) {
@@ -151,7 +151,7 @@ router.post("/google-login", async (req, res) => {
             }
         }
         
-        const authToken = jwt.sign(data, jwtSecret);
+        const authToken = jwt.sign(data, JWT_SECRET);
         return res.json({ success: true, authToken: authToken });
         
     } catch (error) {

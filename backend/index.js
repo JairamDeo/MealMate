@@ -9,7 +9,7 @@ const cors = require('cors');
 const mongoDB = require("./db")
 mongoDB();
 
-const FrontendURL = process.env.FRONTEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.get("/", (req, res) => {
   res.status(200).send("Server is running");
@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 // Middleware CORS handling
 app.use((req,res,next)=>{
-  res.setHeader("Access-Control-Allow-Origin", FrontendURL);
+  res.setHeader("Access-Control-Allow-Origin", FRONTEND_URL);
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -26,7 +26,10 @@ app.use((req,res,next)=>{
 })
 
 app.use(cors());
-app.use(cors({ origin: FrontendURL, credentials: true }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
 app.use(express.json());
 
 
