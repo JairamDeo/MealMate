@@ -41,7 +41,7 @@ export default function LogIn() {
         { 
           theme: 'filled_black',
           size: 'large', 
-          width: '100%',
+          width: 320, // Fixed pixel width instead of percentage
           text: 'continue_with', // "Continue with Google" instead of "Sign in with Google"
           shape: 'rectangular',
           logo_alignment: 'center'
@@ -52,6 +52,8 @@ export default function LogIn() {
 
   const handleGoogleResponse = async (response) => {
     try {
+      setError(""); // Clear any previous errors
+      
       const googleResponse = await fetch(`${backendUrl}/api/google-login`, {
         method: 'POST',
         headers: {
@@ -72,35 +74,45 @@ export default function LogIn() {
           navigate("/");
         }, 2000);
       } else {
-        alert("Google login failed. Please try again.");
+        setError(data.error || "Google login failed. Please try again.");
       }
     } catch (error) {
       console.error("Google login error:", error);
-      alert("An error occurred during Google login");
+      setError("An error occurred during Google login");
     }
   };
 
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${backendUrl}/api/loginuser`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: credentials.email, password: credentials.password })
-    });
+    setError(""); // Clear any previous errors
+    
+    try {
+      const response = await fetch(`${backendUrl}/api/loginuser`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: credentials.email, password: credentials.password })
+      });
 
-    const json = await response.json();
+      const json = await response.json();
 
-    if (!json.success) {
-      alert("Enter Valid Credentials");
-    }
+      if (!json.success) {
+        setError("Invalid email or password. Please try again.");
+        return;
+      }
 
-    if (json.success) {
-      setShowSuccessAnimation(true);
-      setTimeout(() => {
-        localStorage.setItem("userEmail", credentials.email);
-        localStorage.setItem("authToken", json.authToken);
-        navigate("/");
-      }, 2000);
+      if (json.success) {
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          localStorage.setItem("userEmail", credentials.email);
+          localStorage.setItem("authToken", json.authToken);
+          navigate("/");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An error occurred during login");
     }
   };
 
@@ -121,6 +133,13 @@ export default function LogIn() {
 
       <form onSubmit={handleSubmit} className={`w-full max-w-md bg-black bg-opacity-70 backdrop-blur-md rounded-lg p-6 text-white shadow-lg transition-opacity duration-1000 ${showSuccessAnimation ? 'opacity-0' : 'opacity-100'}`}>
         <h2 className="text-center text-2xl font-bold mb-6">Log In</h2>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-500 bg-opacity-70 rounded text-white text-sm">
+            {error}
+          </div>
+        )}
+        
         <div className="mb-4">
           <label htmlFor="email" className="block mb-1">Email address</label>
           <input type="email" name="email" value={credentials.email} onChange={handleonChange} required className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400" />
@@ -145,7 +164,9 @@ export default function LogIn() {
         <button type="submit" className="w-full py-2 bg-orange-500 hover:bg-orange-600 rounded text-white font-semibold transition">Log In</button>
         <Link to="/signup" className="block w-full text-center mt-3 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white transition">I'm a New User</Link>
         <div className="mt-4 text-center">
-          <div id="googleSignInDiv" className="w-full"></div>
+          <div className="flex justify-center">
+            <div id="googleSignInDiv"></div>
+          </div>
         </div>
       </form>
     </div>

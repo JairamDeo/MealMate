@@ -42,7 +42,7 @@ export default function Signup() {
         { 
           theme: 'filled_black',
           size: 'large', 
-          width: '100%',
+          width: 320, // Fixed pixel width instead of percentage
           text: 'continue_with', // "Continue with Google" instead of "Sign in with Google"
           shape: 'rectangular',
           logo_alignment: 'center'
@@ -53,6 +53,8 @@ export default function Signup() {
 
   const handleGoogleResponse = async (response) => {
     try {
+      setError(""); // Clear any previous errors
+      
       const googleResponse = await fetch(`${backendUrl}/api/google-login`, {
         method: 'POST',
         headers: {
@@ -73,39 +75,52 @@ export default function Signup() {
           navigate("/");
         }, 2000);
       } else {
-        alert("Google signup failed. Please try again.");
+        setError(data.error || "Google signup failed. Please try again.");
       }
     } catch (error) {
       console.error("Google login error:", error);
-      alert("An error occurred during Google signup");
+      setError("An error occurred during Google signup");
     }
   };
 
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${backendUrl}/api/createuser`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: credentials.name,
-        email: credentials.email,
-        password: credentials.password,
-        location: credentials.geolocation
-      })
-    });
+    setError(""); // Clear any previous errors
+    
+    try {
+      const response = await fetch(`${backendUrl}/api/createuser`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: credentials.name,
+          email: credentials.email,
+          password: credentials.password,
+          location: credentials.geolocation
+        })
+      });
 
-    const json = await response.json();
+      const json = await response.json();
 
-    if (json.success) {
-      setShowSuccessAnimation(true);
-      setTimeout(() => {
-        setcredentials({ name: "", email: "", password: "", geolocation: "" });
-        localStorage.setItem("userEmail", credentials.email);
-        localStorage.setItem("authToken", json.authToken);
-        navigate("/");
-      }, 2000);
-    } else {
-      alert("Enter Valid Credentials");
+      if (json.success) {
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          setcredentials({ name: "", email: "", password: "", geolocation: "" });
+          localStorage.setItem("userEmail", credentials.email);
+          localStorage.setItem("authToken", json.authToken);
+          navigate("/");
+        }, 2000);
+      } else {
+        if (json.error === "Email already exists") {
+          setError("This email is already registered. Please use a different email or login.");
+        } else {
+          setError("Something went wrong. Please try again.");
+        }
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      setError("An error occurred during signup");
     }
   };
 
@@ -126,6 +141,13 @@ export default function Signup() {
 
       <form onSubmit={handleSubmit} className={`w-full max-w-md bg-black bg-opacity-70 backdrop-blur-md rounded-lg p-6 text-white shadow-lg transition-opacity duration-1000 ${showSuccessAnimation ? 'opacity-0' : 'opacity-100'}`}>
         <h2 className="text-center text-2xl font-bold mb-6">Sign Up</h2>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-500 bg-opacity-70 rounded text-white text-sm">
+            {error}
+          </div>
+        )}
+        
         <div className="mb-4">
           <label htmlFor="name" className="block mb-1">Name</label>
           <input type="text" name="name" value={credentials.name} onChange={handleonChange} required className="w-full px-4 py-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400" />
@@ -158,7 +180,9 @@ export default function Signup() {
         <button type="submit" className="w-full py-2 bg-orange-500 hover:bg-orange-600 rounded text-white font-semibold transition">Sign Up</button>
         <Link to="/login" className="block w-full text-center mt-3 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white transition">Already a User</Link>
         <div className="mt-4 text-center">
-          <div id="googleSignInDiv" className="w-full"></div>
+          <div className="flex justify-center">
+            <div id="googleSignInDiv"></div>
+          </div>
         </div>
       </form>
     </div>

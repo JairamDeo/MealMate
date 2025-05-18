@@ -25,22 +25,34 @@ router.post("/createuser", [
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        /* to store hash  password in db  */
-        const salt = await bcrypt.genSalt(10);
-        let secPassword = await bcrypt.hash(req.body.password, salt);
 
         try {
+            // Check if email already exists
+            const existingUser = await User.findOne({ email: req.body.email });
+            if (existingUser) {
+                return res.status(400).json({ success: false, error: "Email already exists" });
+            }
+            
+            /* to store hash password in db  */
+            const salt = await bcrypt.genSalt(10);
+            let secPassword = await bcrypt.hash(req.body.password, salt);
+
             await User.create({
                 name: req.body.name,
                 password: secPassword,
                 email: req.body.email,
                 location: req.body.location
             })         
-            const authToken = jwt.sign({ email: User.email }, jwtSecret);
-            return res.json({ success: true, authToken:authToken });
+            const data = {
+                user: {
+                    id: req.body.email
+                }
+            }
+            const authToken = jwt.sign(data, jwtSecret);
+            return res.json({ success: true, authToken: authToken });
         } catch (error) {
             console.log(error)
-            res.json({ success: false });
+            res.status(500).json({ success: false, error: "Server error" });
         }
     })
 
@@ -115,12 +127,21 @@ router.post("/google-login", async (req, res) => {
             const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const secPassword = await bcrypt.hash(randomPassword, salt);
             
-            user = await User.create({
-                name: name,
-                email: email,
-                password: secPassword,
-                location: "Not specified" // Default location
-            });
+            try {
+                user = await User.create({
+                    name: name,
+                    email: email,
+                    password: secPassword,
+                    location: "Not specified" // Default location
+                });
+            } catch (error) {
+                // If there's an error creating the user, it might be due to a race condition
+                // Try to find the user again before failing
+                user = await User.findOne({ email });
+                if (!user) {
+                    return res.status(500).json({ success: false, error: "Failed to create user" });
+                }
+            }
         }
         
         // Create JWT token (same as regular login)
