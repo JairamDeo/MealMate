@@ -47,8 +47,9 @@ vim .env
 
 Before running the frontend app, create a `.env` file in the root directory and add the following line:
 
-```
+```bash
 VITE_BACKEND_URL=http://localhost:5000
+VITE_GOOGLE_CLIENT_ID=
 ```
 
 http://localhost:5000 This URL should point to your backend server.
