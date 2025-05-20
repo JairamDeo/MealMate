@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default function MyOrder() {
   const [orderData, setOrderData] = useState({});
@@ -11,7 +12,7 @@ export default function MyOrder() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: localStorage.getItem('userEmail'),
+        email: Cookies.get('userEmail'),
       }),
     }).then(async (res) => {
       let response = await res.json();

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 import { useCart, useDispatchCart } from '../components/ContextReduce';
 import { MdDelete } from "react-icons/md";
@@ -40,32 +41,37 @@ export default function Cart() {
   let totalPrice = data.reduce((total, food) => total + food.price, 0);
 
   const handleCheckOut = async () => {
-    let userEmail = localStorage.getItem("userEmail");
+    try {
+      let userEmail = Cookies.get("userEmail");
 
-    let response = await fetch(`${backendUrl}/api/orderData`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        order_data: data,
-        email: userEmail,
-        order_date: new Date().toLocaleString(),
-        finalPrice: totalPrice
-      })
-    });
+      let response = await fetch(`${backendUrl}/api/orderData`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          order_data: data,
+          email: userEmail,
+          order_date: new Date().toLocaleString(),
+          finalPrice: totalPrice
+        })
+      });
 
-    if (response.status === 200) {
-      setShowSuccessAnimation(true); // Show the success animation
-      dispatch({ type: "DROP" }); // Clear the cart
-
-      // Hide the success animation after 2 seconds
-      setTimeout(() => {
-        setShowSuccessAnimation(false);
-        navigate("/myorder");
-      }, 2000);
+      if (response.status === 200) {
+        setShowSuccessAnimation(true);
+        dispatch({ type: "DROP" });
+        setTimeout(() => {
+          setShowSuccessAnimation(false);
+          navigate("/myorder");
+        }, 2000);
+      } else {
+        console.error("Server responded with status:", response.status);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
     }
   }
+
 
   return (
     <div className="container mx-auto px-4 mt-10">
